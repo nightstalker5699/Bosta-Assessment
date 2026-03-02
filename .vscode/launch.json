@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Docker: Attach to NestJS",
+      "type": "node",
+      "request": "attach",
+      "port": 9229, // Port on the host machine
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}", // Your local project root
+      "remoteRoot": "/usr/src/app", // The working directory inside the container
+      "restart": true // Automatically reattach if the container restarts (e.g. during hot reload)
+    }
+  ]
+}

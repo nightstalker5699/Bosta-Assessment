@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import cookieParser from 'cookie-parser';
+import { cleanupOpenApiDoc } from 'nestjs-zod';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,6 +18,7 @@ async function bootstrap() {
     .build();
 
   app.enableCors();
+  app.use(cookieParser());
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('doc', app, () => document, {
