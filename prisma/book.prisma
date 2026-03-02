@@ -1,0 +1,13 @@
+model Book {
+    id                String      @id @default(uuid())
+    title             String
+    author            String
+    isbn              String      @unique
+    shelfLocation     String      @map("shelf_location")
+    availableQuantity Int         @default(1) @map("available_quantity")
+    borrowings        Borrowing[] @relation("BookBorrowed")
+
+    // INFO
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+}

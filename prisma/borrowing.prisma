@@ -1,0 +1,25 @@
+model Borrowing {
+    id String @id @default(uuid())
+
+    // user entity
+    userId String @map("user_id")
+    user   User   @relation("UserBorrowings", fields: [userId], references: [id])
+
+    // book entity
+    bookId String @map("book_id")
+    book   Book   @relation("BookBorrowed", fields: [bookId], references: [id])
+
+    status     Status   @default(BORROWED)
+    borrowDate DateTime @default(now()) @map("borrow_date")
+    dueDate    DateTime @map("due_date")
+    returnDate DateTime @map("return_date")
+
+    // INFO
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+enum Status {
+    BORROWED
+    RETURNED
+}
