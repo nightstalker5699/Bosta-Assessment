@@ -32,7 +32,6 @@ export class BorrowingsController {
   constructor(private readonly borrowingsService: BorrowingsService) {}
 
   @ZodSerializerDto(BorrowingResponseDto)
-  @Roles(Role.USER, Role.ADMIN)
   @Post()
   @ApiResponse({ status: 201, type: BorrowingResponseDto })
   async create(
