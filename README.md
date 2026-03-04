@@ -53,39 +53,7 @@ A RESTful API for managing books, borrowers, and borrowing processes — built w
 - Docker
 - Docker Compose
 
-### Environment Variables
-
-Copy `.env.example` to `.env` and fill in your values:
-
-```bash
-cp .env.example .env
-```
-
-```env
-DATABASE_URL="postgresql://USER:PASSWORD@db:5432/DB_NAME"
-POSTGRES_USER=your_user
-POSTGRES_PASSWORD=your_password
-POSTGRES_DB=your_db_name
-JWT_SECRET=your_jwt_secret
-PORT=3000
-NODE_ENV=production
-```
-
----
-
 ## Running with Docker
-
-### Development
-
-```bash
-docker-compose -f docker-compose.dev.yml up --build
-```
-
-- Runs with hot reload
-- Exposes port `3000` for the API and `9229` for debugging
-- Database is auto-migrated and seeded on first run
-
-### Production
 
 ```bash
 docker-compose -f docker-compose.prod.yml up --build
