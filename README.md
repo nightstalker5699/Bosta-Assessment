@@ -92,6 +92,12 @@ The database is seeded automatically on first run with:
 
 ---
 
+## Database Schema
+
+![Database Schema](./assets/schema.png)
+
+---
+
 ## API Endpoints Overview
 
 ### Auth
