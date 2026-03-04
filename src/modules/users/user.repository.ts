@@ -11,8 +11,9 @@ export class UserRepository {
     this.users = this.prisma.client.user;
   }
 
-  async create(data: Prisma.UserCreateInput) {
-    return this.users.create({ data });
+  async create(data: Prisma.UserCreateInput, tx?: Prisma.TransactionClient) {
+    const client = tx ? tx.user : this.users;
+    return client.create({ data });
   }
 
   async findAll(query?: Prisma.UserFindManyArgs) {
@@ -33,12 +34,18 @@ export class UserRepository {
   async findOne(query: Prisma.UserFindUniqueArgs) {
     return this.users.findUnique(query);
   }
-  async update(id: string, data: Prisma.UserUpdateInput) {
-    return this.users.update({ where: { id }, data });
+  async update(
+    id: string,
+    data: Prisma.UserUpdateInput,
+    tx?: Prisma.TransactionClient,
+  ) {
+    const client = tx ? tx.user : this.users;
+    return client.update({ where: { id }, data });
   }
 
-  async delete(id: string) {
-    return this.users.delete({ where: { id } });
+  async delete(id: string, tx?: Prisma.TransactionClient) {
+    const client = tx ? tx.user : this.users;
+    return client.delete({ where: { id } });
   }
   async count(query?: Prisma.UserCountArgs) {
     return this.users.count(query);

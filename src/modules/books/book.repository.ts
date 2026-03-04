@@ -30,8 +30,13 @@ export class BookRepository {
     return this.books.findUnique(query);
   }
 
-  async update(id: string, data: Prisma.BookUpdateInput) {
-    return this.books.update({ where: { id }, data });
+  async update(
+    id: string,
+    data: Prisma.BookUpdateInput,
+    tx?: Prisma.TransactionClient,
+  ) {
+    const client = tx ? tx.book : this.books;
+    return client.update({ where: { id }, data });
   }
 
   async delete(id: string) {

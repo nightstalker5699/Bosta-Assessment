@@ -1,9 +1,10 @@
+import 'dotenv/config';
 import {
   Prisma,
   PrismaClient,
   Role,
   Status,
-} from '../src/generated/prisma/client';
+} from '../src/generated/prisma/client.js';
 import { hashSync } from 'bcrypt';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';

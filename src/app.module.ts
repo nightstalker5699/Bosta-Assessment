@@ -8,6 +8,7 @@ import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { AuthModule } from './modules/auth/auth.module';
 import { BooksModule } from './modules/books/books.module';
+import { BorrowingsModule } from './modules/borrowings/borrowings.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { BooksModule } from './modules/books/books.module';
     AuthModule,
     UsersModule,
     BooksModule,
+    BorrowingsModule,
   ],
   controllers: [],
   providers: [
