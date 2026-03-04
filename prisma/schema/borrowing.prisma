@@ -9,14 +9,14 @@ model Borrowing {
     bookId String @map("book_id")
     book   Book   @relation("BookBorrowed", fields: [bookId], references: [id])
 
-    status     Status   @default(BORROWED)
-    borrowDate DateTime @default(now()) @map("borrow_date")
-    dueDate    DateTime @map("due_date")
-    returnDate DateTime @map("return_date")
+    status     Status    @default(BORROWED)
+    borrowDate DateTime  @default(now()) @map("borrow_date") @db.Timestamptz()
+    dueDate    DateTime  @map("due_date") @db.Timestamptz()
+    returnDate DateTime? @map("return_date") @db.Timestamptz()
 
     // INFO
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+    updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 }
 
 enum Status {

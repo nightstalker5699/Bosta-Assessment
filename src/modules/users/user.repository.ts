@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '../../generated/prisma/client';
+import { Prisma, User } from '../../generated/prisma/client';
+import { paginate } from 'src/common/utils/pagination.util';
+import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class UserRepository {
@@ -15,6 +17,13 @@ export class UserRepository {
 
   async findAll(query?: Prisma.UserFindManyArgs) {
     return this.users.findMany(query);
+  }
+
+  async findAllPaginated(
+    query: PaginationQueryDto,
+    args?: Prisma.UserFindManyArgs,
+  ) {
+    return paginate<User>(this.users, query, args, ['name', 'email']);
   }
 
   async findById(id: string) {

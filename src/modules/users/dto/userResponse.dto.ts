@@ -1,4 +1,5 @@
 import { createApiResponseSchema } from 'src/common/dto/response.dto';
+import { createPaginatedResponseSchema } from 'src/common/dto/pagination.dto';
 import { UserSchema, UserWithPasswordSchema } from '../entities/user.entity';
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
@@ -35,3 +36,17 @@ export class UserWithPasswordDto extends createZodDto(
 export class UserWithPasswordListDto extends createZodDto(
   UserWithPasswordListSchema,
 ) {}
+
+export const PaginatedUserSchema = createPaginatedResponseSchema(UserSchema);
+export class PaginatedUserResponseDto extends createZodDto(
+  PaginatedUserSchema,
+) {}
+
+export const UserSchemaWithToken = UserSchema.extend({
+  token: z.string().describe('jwt token'),
+});
+
+export const UserAuthResponseSchema =
+  createApiResponseSchema(UserSchemaWithToken);
+
+export class UserAuthResponseDto extends createZodDto(UserAuthResponseSchema) {}

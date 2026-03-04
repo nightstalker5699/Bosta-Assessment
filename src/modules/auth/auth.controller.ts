@@ -2,7 +2,7 @@ import { Controller, HttpCode, Post, Body, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from 'src/common/decorators/is-public.decorator';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { UserResponseDto } from '../users/dto/userResponse.dto';
+import { UserAuthResponseDto } from '../users/dto/userResponse.dto';
 import type { Response } from 'express';
 import { LoginDto } from './dto/login-dto';
 import { ZodSerializerDto } from 'nestjs-zod';
@@ -12,11 +12,11 @@ import { ApiResponse } from '@nestjs/swagger';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ZodSerializerDto(UserResponseDto)
+  @ZodSerializerDto(UserAuthResponseDto)
   @Public()
   @HttpCode(200)
   @Post('/login')
-  @ApiResponse({ status: 200, type: UserResponseDto })
+  @ApiResponse({ status: 200, type: UserAuthResponseDto })
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
@@ -27,20 +27,20 @@ export class AuthController {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
     return {
       success: true,
       message: 'user logged in successfully',
-      data: user,
+      data: { ...user, token },
     };
   }
 
-  @ZodSerializerDto(UserResponseDto)
+  @ZodSerializerDto(UserAuthResponseDto)
   @Public()
   @HttpCode(201)
   @Post('/register')
-  @ApiResponse({ status: 201, type: UserResponseDto })
+  @ApiResponse({ status: 201, type: UserAuthResponseDto })
   async register(
     @Body() createUserDto: CreateUserDto,
     @Res({ passthrough: true }) res: Response,
@@ -51,12 +51,12 @@ export class AuthController {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
     return {
       success: true,
       message: 'user registered successfully',
-      data: user,
+      data: { ...user, token },
     };
   }
 }

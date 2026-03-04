@@ -15,6 +15,11 @@ async function bootstrap() {
     .addTag('Library Management System')
     .addBearerAuth()
     .addSecurityRequirements('bearer')
+    .addCookieAuth('token', {
+      type: 'http',
+      in: 'cookie',
+      name: 'token',
+    })
     .build();
 
   app.enableCors();

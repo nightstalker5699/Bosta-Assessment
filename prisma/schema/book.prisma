@@ -8,6 +8,6 @@ model Book {
     borrowings        Borrowing[] @relation("BookBorrowed")
 
     // INFO
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+    createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+    updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
 }

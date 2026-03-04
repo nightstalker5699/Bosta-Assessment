@@ -6,14 +6,22 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Role, Roles } from 'src/common/decorators/roles.decorator';
-import { UserListResponseDto, UserResponseDto } from './dto/userResponse.dto';
+import {
+  PaginatedUserResponseDto,
+  UserListResponseDto,
+  UserResponseDto,
+} from './dto/userResponse.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { ApiResponse } from '@nestjs/swagger';
+import { CurrentUser } from 'src/common/decorators/currentUser.decorator';
+import type { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -28,17 +36,25 @@ export class UsersController {
     return { message: 'User created successfully', success: true, data: user };
   }
 
-  @ZodSerializerDto(UserListResponseDto)
+  @ZodSerializerDto(PaginatedUserResponseDto)
   @Roles(Role.ADMIN)
   @Get()
-  @ApiResponse({ status: 200, type: UserListResponseDto })
-  async findAll() {
-    const users = await this.usersService.findAll();
+  @ApiResponse({ status: 200, type: PaginatedUserResponseDto })
+  async findAll(@Query() query: PaginationQueryDto) {
+    const result = await this.usersService.findAllPaginated(query);
     return {
       message: 'Users fetched successfully',
       success: true,
-      data: users,
+      ...result,
     };
+  }
+
+  @ZodSerializerDto(UserResponseDto)
+  @Roles(Role.ADMIN, Role.USER)
+  @Get('me')
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  async findMe(@CurrentUser() user: User) {
+    return { message: 'User fetched successfully', success: true, data: user };
   }
 
   @ZodSerializerDto(UserResponseDto)
@@ -48,6 +64,20 @@ export class UsersController {
   async findOne(@Param('id') id: string) {
     const user = await this.usersService.findOne({ where: { id } });
     return { message: 'User fetched successfully', success: true, data: user };
+  }
+  @ZodSerializerDto(UserResponseDto)
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  @Patch('me')
+  async updateMe(
+    @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser() user: User,
+  ) {
+    const updatedUser = await this.usersService.update(user.id, updateUserDto);
+    return {
+      message: 'User updated successfully',
+      success: true,
+      data: updatedUser,
+    };
   }
 
   @ZodSerializerDto(UserResponseDto)

@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { Prisma } from '../../generated/prisma/client';
 import { hashSync } from 'bcrypt';
+import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +24,10 @@ export class UsersService {
 
   findAll(query?: Prisma.UserFindManyArgs) {
     return this.userRepository.findAll(query);
+  }
+
+  findAllPaginated(query: PaginationQueryDto) {
+    return this.userRepository.findAllPaginated(query);
   }
 
   async findOne(query: Prisma.UserFindUniqueArgs) {
@@ -53,6 +58,7 @@ export class UsersService {
     //hash password
     if (updateUserDto.password && typeof updateUserDto.password === 'string') {
       updateUserDto.password = hashSync(updateUserDto.password, 10);
+      updateUserDto.passwordChangedAt = new Date();
     }
 
     //update user

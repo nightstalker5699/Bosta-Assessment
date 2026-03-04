@@ -7,9 +7,17 @@ import { UsersModule } from './modules/users/users.module';
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { AuthModule } from './modules/auth/auth.module';
+import { BooksModule } from './modules/books/books.module';
 
 @Module({
-  imports: [ConfigModule, PrismaModule, loggerModule, AuthModule, UsersModule],
+  imports: [
+    ConfigModule,
+    PrismaModule,
+    loggerModule,
+    AuthModule,
+    UsersModule,
+    BooksModule,
+  ],
   controllers: [],
   providers: [
     { provide: APP_PIPE, useClass: ZodValidationPipe },

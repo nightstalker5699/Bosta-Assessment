@@ -41,9 +41,10 @@ export class authGuard implements CanActivate {
 
       //5) check if password was changed after token issuance
       if (
+        user.passwordChangedAt &&
         this.isPasswordChangedAfterToken(user.passwordChangedAt, payload.iat)
       ) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('your password has been changed');
       }
 
       //6) all good attach user object to request object
