@@ -95,10 +95,13 @@ export class BorrowingsService {
     });
   }
 
-  async findAll(query: BorrowingQueryDto, userId?: string) {
+  async findAll(query: BorrowingQueryDto, userId?: string, bookId?: string) {
     const where: Prisma.BorrowingWhereInput = {};
     if (userId) {
       where.userId = userId;
+    }
+    if (bookId) {
+      where.bookId = bookId;
     }
 
     if (query.status) {

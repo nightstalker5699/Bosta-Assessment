@@ -10,6 +10,8 @@ model User {
     createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz()
     updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz()
     passwordChangedAt DateTime? @map("password_changed_at") @db.Timestamptz()
+
+    @@index([name])
 }
 
 enum Role {

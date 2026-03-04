@@ -17,6 +17,13 @@ model Borrowing {
     // INFO
     createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
     updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+    @@index([userId])                  // list borrowings by user
+    @@index([bookId])                  // list borrowings by book
+    @@index([status])                  // filter by status
+    @@index([dueDate])                 // overdue queries
+    @@index([status, dueDate])         // overdue = BORROWED + dueDate < now
+    @@index([createdAt])               // reports date range filter
 }
 
 enum Status {

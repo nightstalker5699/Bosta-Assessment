@@ -112,6 +112,26 @@ export class BorrowingsController {
     };
   }
 
+  @ZodSerializerDto(PaginatedBorrowingResponseDto)
+  @Roles(Role.ADMIN)
+  @Get('book/:bookId')
+  @ApiResponse({ status: 200, type: PaginatedBorrowingResponseDto })
+  async findBookBorrowings(
+    @Param('bookId') bookId: string,
+    @Query() query: BorrowingQueryDto,
+  ) {
+    const result = await this.borrowingsService.findAll(
+      query,
+      undefined,
+      bookId,
+    );
+    return {
+      message: 'Book borrowing records fetched successfully',
+      success: true,
+      ...result,
+    };
+  }
+
   @ZodSerializerDto(BorrowingResponseDto)
   @UseGuards(BorrowingOwnerGuard)
   @Get(':id')
