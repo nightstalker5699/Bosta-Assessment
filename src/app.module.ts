@@ -9,6 +9,7 @@ import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { AuthModule } from './modules/auth/auth.module';
 import { BooksModule } from './modules/books/books.module';
 import { BorrowingsModule } from './modules/borrowings/borrowings.module';
+import { ReportsModule } from './modules/reports/reports.module';
 
 @Module({
   imports: [
@@ -19,7 +20,9 @@ import { BorrowingsModule } from './modules/borrowings/borrowings.module';
     UsersModule,
     BooksModule,
     BorrowingsModule,
+    ReportsModule,
   ],
+
   controllers: [],
   providers: [
     { provide: APP_PIPE, useClass: ZodValidationPipe },

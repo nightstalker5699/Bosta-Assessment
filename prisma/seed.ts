@@ -28,6 +28,8 @@ async function main() {
 
   // 2. Create Users (11 users: 1 Admin, 10 Regular Users)
   const password = hashSync('password123', 10);
+  const twoMonthsAgo = new Date();
+  twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
 
   const admin = await prisma.user.create({
     data: {
@@ -35,6 +37,8 @@ async function main() {
       email: 'admin@lms.com',
       password,
       role: Role.ADMIN,
+      createdAt: twoMonthsAgo,
+      updatedAt: twoMonthsAgo,
     },
   });
 
@@ -47,6 +51,8 @@ async function main() {
         email: `user${i}@example.com`,
         password,
         role: Role.USER,
+        createdAt: twoMonthsAgo,
+        updatedAt: twoMonthsAgo,
       },
     });
     users.push(user);
@@ -62,6 +68,8 @@ async function main() {
         isbn: `ISBN-1000${i}`,
         shelfLocation: `Shelf ${Math.ceil(i / 5)}`,
         availableQuantity: 5,
+        createdAt: twoMonthsAgo,
+        updatedAt: twoMonthsAgo,
       },
     });
     books.push(book);
@@ -112,6 +120,8 @@ async function main() {
           borrowDate,
           dueDate,
           returnDate,
+          createdAt: borrowDate,
+          updatedAt: isReturned ? returnDate || new Date() : borrowDate,
         },
       });
 

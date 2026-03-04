@@ -10,6 +10,7 @@ import { BorrowingQueryDto } from './dto/borrowing.dto';
 import { Status, Prisma } from '../../generated/prisma/client.js';
 
 import { PrismaService } from '../prisma/prisma.service';
+import { BorrowingFindManyArgs } from 'src/generated/prisma/models';
 
 @Injectable()
 export class BorrowingsService {
@@ -96,7 +97,6 @@ export class BorrowingsService {
 
   async findAll(query: BorrowingQueryDto, userId?: string) {
     const where: Prisma.BorrowingWhereInput = {};
-
     if (userId) {
       where.userId = userId;
     }
@@ -117,6 +117,10 @@ export class BorrowingsService {
     return this.borrowingRepository.findAllPaginated(query, {
       where,
     });
+  }
+
+  async findAllForReport(query: BorrowingFindManyArgs) {
+    return this.borrowingRepository.find(query);
   }
 
   async findOne(id: string) {

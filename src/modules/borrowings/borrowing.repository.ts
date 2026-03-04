@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, Borrowing } from '../../generated/prisma/client.js';
+import { Prisma } from '../../generated/prisma/client.js';
 import { paginate } from 'src/common/utils/pagination.util';
 import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
+import { Borrowing } from './entities/borrowing.entity';
 
 @Injectable()
 export class BorrowingRepository {
@@ -27,6 +28,13 @@ export class BorrowingRepository {
     args?: Prisma.BorrowingFindManyArgs,
   ) {
     return paginate<Borrowing>(this.borrowings, query, {
+      ...args,
+      include: { book: true, user: true },
+    });
+  }
+
+  async find(args?: Prisma.BorrowingFindManyArgs) {
+    return this.borrowings.findMany({
       ...args,
       include: { book: true, user: true },
     });
