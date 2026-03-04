@@ -1,98 +1,174 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📚 Library Management System
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A RESTful API for managing books, borrowers, and borrowing processes — built with NestJS, PostgreSQL, and Prisma.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Books
+- Add, update, and delete books
+- List all books with pagination
+- Search books by title, author, or ISBN
 
-## Project setup
+### Users (Borrowers)
+- Register and manage borrowers
+- List all borrowers (Admin only)
+- View and update own profile
 
-```bash
-$ npm install
-```
+### Borrowing Process
+- Borrow a book (as yourself or on behalf of a user)
+- Return a book
+- View your current borrowings
+- View borrowings by user or by book
+- Track due dates and overdue books
 
-## Compile and run the project
+### Reports (Admin only)
+- Export borrowing data for a custom date range as CSV or XLSX
+- Export all overdue borrowings from last month
+- Export all borrowings from last month
 
-```bash
-# development
-$ npm run start
+### Security & Performance
+- JWT authentication via HTTP-only cookies
+- Role-based access control (USER / ADMIN)
+- Rate limiting on login and register endpoints (5 requests per minute)
+- Database indexes on frequently queried fields
 
-# watch mode
-$ npm run start:dev
+---
 
-# production mode
-$ npm run start:prod
-```
+## Tech Stack
 
-## Run tests
+- **Framework**: NestJS
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Validation**: Zod + nestjs-zod
+- **Documentation**: Swagger UI
+- **Containerization**: Docker + Docker Compose
 
-```bash
-# unit tests
-$ npm run test
+---
 
-# e2e tests
-$ npm run test:e2e
+## Getting Started
 
-# test coverage
-$ npm run test:cov
-```
+### Prerequisites
+- Docker
+- Docker Compose
 
-## Deployment
+### Environment Variables
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Copy `.env.example` to `.env` and fill in your values:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+cp .env.example .env
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@db:5432/DB_NAME"
+POSTGRES_USER=your_user
+POSTGRES_PASSWORD=your_password
+POSTGRES_DB=your_db_name
+JWT_SECRET=your_jwt_secret
+PORT=3000
+NODE_ENV=production
+```
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+## Running with Docker
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Development
 
-## Support
+```bash
+docker-compose -f docker-compose.dev.yml up --build
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- Runs with hot reload
+- Exposes port `3000` for the API and `9229` for debugging
+- Database is auto-migrated and seeded on first run
 
-## Stay in touch
+### Production
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+docker-compose -f docker-compose.prod.yml up --build
+```
 
-## License
+- Runs the compiled NestJS app
+- Database migrations and seeding run automatically on startup
+- Seeding is skipped if data already exists
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+## API Documentation
+
+Once the app is running, visit:
+
+```
+http://localhost:3000/doc
+```
+
+Swagger UI documents all endpoints with expected inputs and outputs.
+
+---
+
+## Default Seed Data
+
+The database is seeded automatically on first run with:
+
+| Role  | Email                | Password      |
+|-------|----------------------|---------------|
+| Admin | admin@lms.com        | password123   |
+| User  | user1@example.com    | password123   |
+| User  | user2@example.com    | password123   |
+| ...   | user{N}@example.com  | password123   |
+
+10 regular users, 15 books, and borrowing records with various statuses are created for testing.
+
+---
+
+## API Endpoints Overview
+
+### Auth
+| Method | Endpoint          | Access | Description        |
+|--------|-------------------|--------|--------------------|
+| POST   | /auth/login       | Public | Login              |
+| POST   | /auth/register    | Public | Register           |
+
+### Books
+| Method | Endpoint          | Access | Description              |
+|--------|-------------------|--------|--------------------------|
+| GET    | /books            | Public | List all books           |
+| GET    | /books/:id        | Public | Get a book               |
+| POST   | /books            | Admin  | Add a book               |
+| PATCH  | /books/:id        | Admin  | Update a book            |
+| DELETE | /books/:id        | Admin  | Delete a book            |
+
+### Users
+| Method | Endpoint          | Access      | Description              |
+|--------|-------------------|-------------|--------------------------|
+| GET    | /users            | Admin       | List all users           |
+| GET    | /users/me         | User/Admin  | Get own profile          |
+| PATCH  | /users/me         | User/Admin  | Update own profile       |
+| GET    | /users/:id        | Admin       | Get a user               |
+| PATCH  | /users/:id        | Admin       | Update a user            |
+| DELETE | /users/:id        | Admin       | Delete a user            |
+
+### Borrowings
+| Method | Endpoint                    | Access     | Description                        |
+|--------|-----------------------------|------------|------------------------------------|
+| POST   | /borrowings                 | User/Admin | Borrow a book                      |
+| POST   | /borrowings/me              | User       | Borrow a book for yourself         |
+| GET    | /borrowings                 | Admin      | List all borrowings                |
+| GET    | /borrowings/me              | User       | List your borrowings               |
+| GET    | /borrowings/:id             | Owner/Admin| Get a borrowing record             |
+| GET    | /borrowings/user/:userId    | Admin      | List borrowings by user            |
+| GET    | /borrowings/book/:bookId    | Admin      | List borrowings by book            |
+| PATCH  | /borrowings/:id/return      | Owner/Admin| Return a book                      |
+| DELETE | /borrowings/:id             | Admin      | Delete a borrowing record          |
+
+### Reports (Admin only)
+| Method | Endpoint                  | Description                                      |
+|--------|---------------------------|--------------------------------------------------|
+| GET    | /reports?from=&to=&format= | Export borrowings for a custom date range       |
+| GET    | /reports/overdue?format=  | Export overdue borrowings from last month        |
+| GET    | /reports/last-month?format= | Export all borrowings from last month          |
+
+> `format` query param accepts `csv` or `xlsx`
