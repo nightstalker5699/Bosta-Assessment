@@ -21,10 +21,13 @@ const prisma = new PrismaClient({
 async function main() {
   console.log('Seeding data...');
 
-  // 1. Clean data
-  await prisma.borrowing.deleteMany();
-  await prisma.book.deleteMany();
-  await prisma.user.deleteMany();
+  // 1. Check if data already exists
+  const existingUsers = await prisma.user.count();
+
+  if (existingUsers > 0) {
+    console.log('Data already exists, skipping seed...');
+    return;
+  }
 
   // 2. Create Users (11 users: 1 Admin, 10 Regular Users)
   const password = hashSync('password123', 10);
