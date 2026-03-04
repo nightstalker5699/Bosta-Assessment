@@ -31,8 +31,8 @@ export class UserRepository {
     return this.users.findUnique({ where: { id } });
   }
 
-  async findOne(query: Prisma.UserFindUniqueArgs) {
-    return this.users.findUnique(query);
+  async findOne(query: Prisma.UserFindFirstArgs) {
+    return this.users.findFirst(query);
   }
   async update(
     id: string,

@@ -7,19 +7,24 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BorrowingsService } from './borrowings.service';
-import { CreateBorrowingDto, UpdateBorrowingDto } from './dto/borrowing.dto';
 import {
   BorrowingResponseDto,
   PaginatedBorrowingResponseDto,
 } from './dto/borrowing-response.dto';
+import {
+  BorrowingQueryDto,
+  CreateBorrowingDto,
+  CreateBorrowingForMyselfDto,
+} from './dto/borrowing.dto';
 import { Role, Roles } from 'src/common/decorators/roles.decorator';
 import { CurrentUser } from 'src/common/decorators/currentUser.decorator';
 import type { User } from '../../generated/prisma/client.js';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
+import { BorrowingOwnerGuard } from './guards/borrowing-owner.guard';
 
 @ApiTags('borrowings')
 @Controller('borrowings')
@@ -34,15 +39,8 @@ export class BorrowingsController {
     @Body() createBorrowingDto: CreateBorrowingDto,
     @CurrentUser() user: User,
   ) {
-    // If user is regular USER, they borrow for themselves.
-    // If ADMIN, they can provide a userId in the body.
-    const targetUserId =
-      user.role === 'ADMIN' && createBorrowingDto.userId
-        ? createBorrowingDto.userId
-        : user.id;
-
     const borrowing = await this.borrowingsService.borrowBook(
-      targetUserId,
+      createBorrowingDto.userId,
       createBorrowingDto.bookId,
     );
     return {
@@ -52,11 +50,44 @@ export class BorrowingsController {
     };
   }
 
+  @ZodSerializerDto(BorrowingResponseDto)
+  @Post('me')
+  @ApiResponse({ status: 201, type: BorrowingResponseDto })
+  async borrowForMyself(
+    @Body() createBorrowingForMyselfDto: CreateBorrowingForMyselfDto,
+    @CurrentUser() user: User,
+  ) {
+    const borrowing = await this.borrowingsService.borrowBook(
+      user.id,
+      createBorrowingForMyselfDto.bookId,
+    );
+    return {
+      message: 'Book borrowed successfully',
+      success: true,
+      data: borrowing,
+    };
+  }
+
+  @ZodSerializerDto(PaginatedBorrowingResponseDto)
+  @Get('me')
+  @ApiResponse({ status: 200, type: PaginatedBorrowingResponseDto })
+  async findMyBorrowings(
+    @Query() query: BorrowingQueryDto,
+    @CurrentUser() user: User,
+  ) {
+    const result = await this.borrowingsService.findAll(query, user.id);
+    return {
+      message: 'Your borrowing records fetched successfully',
+      success: true,
+      ...result,
+    };
+  }
+
   @ZodSerializerDto(PaginatedBorrowingResponseDto)
   @Roles(Role.ADMIN)
   @Get()
   @ApiResponse({ status: 200, type: PaginatedBorrowingResponseDto })
-  async findAll(@Query() query: PaginationQueryDto) {
+  async findAll(@Query() query: BorrowingQueryDto) {
     const result = await this.borrowingsService.findAll(query);
     return {
       message: 'Borrowing records fetched successfully',
@@ -65,8 +96,24 @@ export class BorrowingsController {
     };
   }
 
-  @ZodSerializerDto(BorrowingResponseDto)
+  @ZodSerializerDto(PaginatedBorrowingResponseDto)
   @Roles(Role.ADMIN)
+  @Get('user/:userId')
+  @ApiResponse({ status: 200, type: PaginatedBorrowingResponseDto })
+  async findUserBorrowings(
+    @Param('userId') userId: string,
+    @Query() query: BorrowingQueryDto,
+  ) {
+    const result = await this.borrowingsService.findAll(query, userId);
+    return {
+      message: 'User borrowing records fetched successfully',
+      success: true,
+      ...result,
+    };
+  }
+
+  @ZodSerializerDto(BorrowingResponseDto)
+  @UseGuards(BorrowingOwnerGuard)
   @Get(':id')
   @ApiResponse({ status: 200, type: BorrowingResponseDto })
   async findOne(@Param('id') id: string) {
@@ -79,7 +126,7 @@ export class BorrowingsController {
   }
 
   @ZodSerializerDto(BorrowingResponseDto)
-  @Roles(Role.ADMIN)
+  @UseGuards(BorrowingOwnerGuard)
   @Patch(':id/return')
   @ApiResponse({ status: 200, type: BorrowingResponseDto })
   async returnBook(@Param('id') id: string) {

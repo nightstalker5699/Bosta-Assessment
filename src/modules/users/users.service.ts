@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { Prisma } from '../../generated/prisma/client';
 import { hashSync } from 'bcrypt';
@@ -10,7 +14,7 @@ export class UsersService {
   async create(createUserDto: Prisma.UserCreateInput) {
     //check for email already in database
     const emailExists = await this.userRepository.count({
-      where: { email: createUserDto.email },
+      where: { email: { equals: createUserDto.email, mode: 'insensitive' } },
     });
     // if exists return error to user
     if (emailExists) {
@@ -30,12 +34,12 @@ export class UsersService {
     return this.userRepository.findAllPaginated(query);
   }
 
-  async findOne(query: Prisma.UserFindUniqueArgs) {
+  async findOne(query: Prisma.UserFindFirstArgs) {
     //find user by id
     const user = await this.userRepository.findOne(query);
     // if not found return error to user
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
     // return user
     return user;
@@ -48,7 +52,7 @@ export class UsersService {
     //check for email already in database
     if (updateUserDto.email && typeof updateUserDto.email === 'string') {
       const emailExists = await this.userRepository.count({
-        where: { email: updateUserDto.email },
+        where: { email: { equals: updateUserDto.email, mode: 'insensitive' } },
       });
       if (emailExists) {
         throw new BadRequestException('Email already exists');

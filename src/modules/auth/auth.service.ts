@@ -15,7 +15,7 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const user = await this.usersService.findOne({
-      where: { email: loginDto.email },
+      where: { email: { equals: loginDto.email, mode: 'insensitive' } },
     });
 
     if (!compareSync(loginDto.password, user.password)) {

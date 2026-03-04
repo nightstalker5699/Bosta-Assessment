@@ -6,8 +6,8 @@ import {
 import { BorrowingRepository } from './borrowing.repository';
 import { BookRepository } from '../books/book.repository';
 import { UserRepository } from '../users/user.repository';
-import { PaginationQueryDto } from 'src/common/dto/pagination.dto';
-import { Status } from '../../generated/prisma/client.js';
+import { BorrowingQueryDto } from './dto/borrowing.dto';
+import { Status, Prisma } from '../../generated/prisma/client.js';
 
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -37,7 +37,9 @@ export class BorrowingsService {
       where: { userId, bookId, status: Status.BORROWED },
     });
     if (activeBorrowing > 0) {
-      throw new BadRequestException('You already have this book borrowed');
+      throw new BadRequestException(
+        'this User already have this book borrowed',
+      );
     }
 
     // 4. Create borrowing in a transaction
@@ -92,8 +94,29 @@ export class BorrowingsService {
     });
   }
 
-  async findAll(query: PaginationQueryDto) {
-    return this.borrowingRepository.findAllPaginated(query);
+  async findAll(query: BorrowingQueryDto, userId?: string) {
+    const where: Prisma.BorrowingWhereInput = {};
+
+    if (userId) {
+      where.userId = userId;
+    }
+
+    if (query.status) {
+      where.status = query.status as Status;
+    }
+
+    if (query.overdue !== undefined) {
+      where.status = Status.BORROWED;
+      if (query.overdue) {
+        where.dueDate = { lt: new Date() };
+      } else {
+        where.dueDate = { gte: new Date() };
+      }
+    }
+
+    return this.borrowingRepository.findAllPaginated(query, {
+      where,
+    });
   }
 
   async findOne(id: string) {

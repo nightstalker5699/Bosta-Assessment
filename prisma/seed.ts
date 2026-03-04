@@ -78,9 +78,28 @@ async function main() {
 
     for (let j = 0; j < 4; j++) {
       const book = selectedBooks[j];
-      const isReturned = j < 2; // 2 returned, 2 borrowed
       const borrowDate = new Date();
-      borrowDate.setDate(borrowDate.getDate() - (j + 1) * 2); // Staggered dates
+      let isReturned = false;
+
+      // Scenario Distribution:
+      // j=0: Recent returned
+      // j=1: Recent borrowed (active)
+      // j=2: Last month returned
+      // j=3: Last month borrowed (OVERDUE)
+
+      if (j === 0) {
+        borrowDate.setDate(borrowDate.getDate() - 5);
+        isReturned = true;
+      } else if (j === 1) {
+        borrowDate.setDate(borrowDate.getDate() - 3);
+        isReturned = false;
+      } else if (j === 2) {
+        borrowDate.setDate(borrowDate.getDate() - 35);
+        isReturned = true;
+      } else if (j === 3) {
+        borrowDate.setDate(borrowDate.getDate() - 40);
+        isReturned = false;
+      }
 
       const dueDate = new Date(borrowDate.getTime() + borrowDuration);
       const returnDate = isReturned ? new Date() : null;
