@@ -1,4 +1,11 @@
-import { Controller, HttpCode, Post, Body, Res } from '@nestjs/common';
+import {
+  Controller,
+  HttpCode,
+  Post,
+  Body,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from 'src/common/decorators/is-public.decorator';
 import { CreateUserDto } from '../users/dto/create-user.dto';
@@ -7,12 +14,13 @@ import type { Response } from 'express';
 import { LoginDto } from './dto/login-dto';
 import { ZodSerializerDto } from 'nestjs-zod';
 import { ApiResponse } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Throttle({ default: { ttl: 60000, limit: 5 } })
+  @UseGuards(ThrottlerGuard)
   @ZodSerializerDto(UserAuthResponseDto)
   @Public()
   @HttpCode(200)
@@ -38,6 +46,7 @@ export class AuthController {
   }
 
   @Throttle({ default: { ttl: 60000, limit: 5 } })
+  @UseGuards(ThrottlerGuard)
   @ZodSerializerDto(UserAuthResponseDto)
   @Public()
   @HttpCode(201)

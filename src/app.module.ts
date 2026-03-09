@@ -10,16 +10,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { BooksModule } from './modules/books/books.module';
 import { BorrowingsModule } from './modules/borrowings/borrowings.module';
 import { ReportsModule } from './modules/reports/reports.module';
-import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000,
-        limit: 100,
-      },
-    ]),
     ConfigModule,
     PrismaModule,
     loggerModule,
